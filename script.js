@@ -1,4 +1,5 @@
-let dados = [
+let minhaLat = null;
+let minhaLng = null;
   {
     nome: "Posto Copacabana",
     preco: 5.29,
@@ -37,7 +38,10 @@ function render(lista) {
     div.className = "card";
 
     div.innerHTML = `
-      <span>${p.nome}</span>
+      <span>
+  ${p.nome} <br>
+  📍 ${(p.distancia * 111).toFixed(2)} km
+</span>
       <span class="preco">R$ ${p.preco}</span>
     `;
 
@@ -54,19 +58,33 @@ render(dados);
 // SUA LOCALIZAÇÃO
 navigator.geolocation.getCurrentPosition(
   function(pos) {
-    const lat = pos.coords.latitude;
-    const lng = pos.coords.longitude;
+    minhaLat = pos.coords.latitude;
+    minhaLng = pos.coords.longitude;
 
-    // mover mapa até você
-    map.setView([lat, lng], 13);
+    map.setView([minhaLat, minhaLng], 13);
 
-    // marcador azul (você)
-    L.marker([lat, lng])
+    L.marker([minhaLat, minhaLng])
       .addTo(map)
       .bindPopup("📍 Você está aqui")
       .openPopup();
+
+    calcularDistancias();
+    ordenarPorDistancia();
   },
   function(error) {
     console.log("Erro ao pegar localização");
   }
 );
+function calcularDistancias() {
+  dados.forEach(p => {
+    const dx = p.lat - minhaLat;
+    const dy = p.lng - minhaLng;
+
+    p.distancia = Math.sqrt(dx * dx + dy * dy);
+  });
+}
+
+function ordenarPorDistancia() {
+  dados.sort((a, b) => a.distancia - b.distancia);
+  render(dados);
+}
