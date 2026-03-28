@@ -34,14 +34,16 @@ function render(lista) {
   container.innerHTML = "";
 
   lista.forEach(p => {
+    const distanciaKm = p.distancia ? (p.distancia * 111).toFixed(2) : "--";
+
     const div = document.createElement("div");
     div.className = "card";
 
     div.innerHTML = `
       <span>
-  ${p.nome} <br>
-  📍 ${(p.distancia * 111).toFixed(2)} km
-</span>
+        ${p.nome} <br>
+        📍 ${distanciaKm} km
+      </span>
       <span class="preco">R$ ${p.preco}</span>
     `;
 
