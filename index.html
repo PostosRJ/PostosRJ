@@ -3,25 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <title>Gasolina Já</title>
-
   <link rel="stylesheet" href="style.css">
-
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
-
 <body>
 
-<header>
+<header class="header">
   <h1>⛽ Gasolina Já</h1>
-  <input type="text" id="busca" placeholder="Buscar posto...">
-  <button onclick="ordenar()">Ordenar por preço</button>
+  <input type="text" id="busca" placeholder="Pesquisar posto ou cidade...">
 </header>
 
-<div id="map"></div>
+<div class="container">
 
-<main id="postos"></main>
+  <div class="top-bar">
+    <span>Postos encontrados</span>
+    <button onclick="ordenar()">Mais barato</button>
+  </div>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <div id="postos"></div>
+
+</div>
+
 <script src="script.js"></script>
 
 </body>
