@@ -1,11 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-  <title>Teste</title>
+  <meta charset="UTF-8">
+  <title>Gasolina Já</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
+
 <body>
 
-<h1>🔥 Meu site está funcionando!</h1>
+<header>
+  <h1>⛽ Gasolina Já</h1>
+  <input type="text" id="busca" placeholder="Buscar posto...">
+  <button onclick="ordenar()">Ordenar por preço</button>
+</header>
+
+<div id="map"></div>
+
+<main id="postos"></main>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="script.js"></script>
 
 </body>
 </html>
