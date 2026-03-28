@@ -44,7 +44,6 @@ lista.forEach(p => {
   📍 ${distanciaKm} km
 </div>
 <span class="preco">R$ ${p.preco}</span>
-}
 
     container.appendChild(div);
   });
