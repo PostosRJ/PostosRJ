@@ -51,3 +51,22 @@ function ordenar() {
 }
 
 render(dados);
+// SUA LOCALIZAÇÃO
+navigator.geolocation.getCurrentPosition(
+  function(pos) {
+    const lat = pos.coords.latitude;
+    const lng = pos.coords.longitude;
+
+    // mover mapa até você
+    map.setView([lat, lng], 13);
+
+    // marcador azul (você)
+    L.marker([lat, lng])
+      .addTo(map)
+      .bindPopup("📍 Você está aqui")
+      .openPopup();
+  },
+  function(error) {
+    console.log("Erro ao pegar localização");
+  }
+);
