@@ -16,41 +16,40 @@ let dados = [
   }
 ];
 
-// CRIAR MAPA
+// MAPA
 const map = L.map('map').setView([-22.97, -43.18], 12);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
-// FUNÇÃO DE RENDER
+// CONTAINER
 const container = document.getElementById("postos");
 
+// RENDER
 function render(lista) {
   container.innerHTML = "";
 
-  const maisBarato = encontrarMaisBarato();
+  const maisBarato = lista.reduce((a, b) => a.preco < b.preco ? a : b);
 
-lista.forEach(p => {
+  lista.forEach(p => {
     const distanciaKm = p.distancia ? (p.distancia * 111).toFixed(2) : "--";
 
     const div = document.createElement("div");
     div.className = "card";
 
     div.innerHTML = `
-      <div>
-  ${p.nome}
-  ${p === maisBarato ? "🔥" : ""}
-  <br>
-  📍 ${distanciaKm} km
-</div>
-<span class="preco">R$ ${p.preco}</span>
-}
+      <span>
+        ${p.nome} ${p === maisBarato ? "🔥" : ""}<br>
+        📍 ${distanciaKm} km
+      </span>
+      <span class="preco">R$ ${p.preco}</span>
+    `;
 
     container.appendChild(div);
   });
 }
 
-// CALCULAR DISTÂNCIA
+// DISTÂNCIA
 function calcularDistancias() {
   dados.forEach(p => {
     const dx = p.lat - minhaLat;
@@ -62,7 +61,6 @@ function calcularDistancias() {
 // ORDENAR
 function ordenarPorDistancia() {
   dados.sort((a, b) => a.distancia - b.distancia);
-  render(dados);
 }
 
 // LOCALIZAÇÃO
@@ -80,43 +78,27 @@ navigator.geolocation.getCurrentPosition(
 
     calcularDistancias();
     ordenarPorDistancia();
-    destacarMaisBarato();
+
+    // DESTACAR MAIS BARATO NO MAPA
+    const maisBarato = dados.reduce((a, b) => a.preco < b.preco ? a : b);
+
+    L.marker([maisBarato.lat, maisBarato.lng])
+      .addTo(map)
+      .bindPopup(`🔥 MAIS BARATO<br>${maisBarato.nome}<br>R$ ${maisBarato.preco}`);
+
+    render(dados);
   },
-  function(error) {
-    console.log("Erro ao pegar localização");
-    render(dados); // fallback
+  function() {
+    render(dados);
   }
 );
 
-// MARCADORES DOS POSTOS
+// MARCADORES
 dados.forEach(p => {
   L.marker([p.lat, p.lng])
     .addTo(map)
-    .bindPopup(`${p.nome} <br> R$ ${p.preco}`);
+    .bindPopup(`${p.nome}<br>R$ ${p.preco}`);
 });
 
 // PRIMEIRO RENDER
 render(dados);
-function encontrarMaisBarato() {
-  if (!dados.length) return;
-
-  let maisBarato = dados[0];
-
-  dados.forEach(p => {
-    if (p.preco < maisBarato.preco) {
-      maisBarato = p;
-    }
-  });
-
-  return maisBarato;
-}
-function destacarMaisBarato() {
-  const p = encontrarMaisBarato();
-
-  if (!p) return;
-
-  L.marker([p.lat, p.lng])
-    .addTo(map)
-    .bindPopup(`🔥 MAIS BARATO<br>${p.nome}<br>R$ ${p.preco}`)
-    .openPopup();
-}
