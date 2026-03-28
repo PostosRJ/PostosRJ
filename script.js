@@ -1,5 +1,7 @@
 let minhaLat = null;
 let minhaLng = null;
+
+let dados = [
   {
     nome: "Posto Copacabana",
     preco: 5.29,
@@ -14,20 +16,13 @@ let minhaLng = null;
   }
 ];
 
-// MAPA
+// CRIAR MAPA
 const map = L.map('map').setView([-22.97, -43.18], 12);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
-// MARCADORES
-dados.forEach(p => {
-  L.marker([p.lat, p.lng])
-    .addTo(map)
-    .bindPopup(`${p.nome} <br> R$ ${p.preco}`);
-});
-
-// LISTA
+// FUNÇÃO DE RENDER
 const container = document.getElementById("postos");
 
 function render(lista) {
@@ -51,13 +46,22 @@ function render(lista) {
   });
 }
 
-function ordenar() {
-  dados.sort((a, b) => a.preco - b.preco);
+// CALCULAR DISTÂNCIA
+function calcularDistancias() {
+  dados.forEach(p => {
+    const dx = p.lat - minhaLat;
+    const dy = p.lng - minhaLng;
+    p.distancia = Math.sqrt(dx * dx + dy * dy);
+  });
+}
+
+// ORDENAR
+function ordenarPorDistancia() {
+  dados.sort((a, b) => a.distancia - b.distancia);
   render(dados);
 }
 
-render(dados);
-// SUA LOCALIZAÇÃO
+// LOCALIZAÇÃO
 navigator.geolocation.getCurrentPosition(
   function(pos) {
     minhaLat = pos.coords.latitude;
@@ -75,18 +79,16 @@ navigator.geolocation.getCurrentPosition(
   },
   function(error) {
     console.log("Erro ao pegar localização");
+    render(dados); // fallback
   }
 );
-function calcularDistancias() {
-  dados.forEach(p => {
-    const dx = p.lat - minhaLat;
-    const dy = p.lng - minhaLng;
 
-    p.distancia = Math.sqrt(dx * dx + dy * dy);
-  });
-}
+// MARCADORES DOS POSTOS
+dados.forEach(p => {
+  L.marker([p.lat, p.lng])
+    .addTo(map)
+    .bindPopup(`${p.nome} <br> R$ ${p.preco}`);
+});
 
-function ordenarPorDistancia() {
-  dados.sort((a, b) => a.distancia - b.distancia);
-  render(dados);
-}
+// PRIMEIRO RENDER
+render(dados);
