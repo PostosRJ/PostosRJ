@@ -1,7 +1,22 @@
 let dados = [
-  { nome: "Posto Shell Centro", cidade: "Rio", preco: 5.49 },
-  { nome: "Posto Ipiranga Copacabana", cidade: "Rio", preco: 5.29 },
-  { nome: "Posto BR Barra", cidade: "Rio", preco: 5.59 }
+  {
+    nome: "Posto Shell",
+    tipo: "Gasolina Comum",
+    preco: 5.29,
+    atualizado: "Hoje"
+  },
+  {
+    nome: "Posto Ipiranga",
+    tipo: "Gasolina Comum",
+    preco: 5.39,
+    atualizado: "Hoje"
+  },
+  {
+    nome: "Posto BR",
+    tipo: "Gasolina Comum",
+    preco: 5.49,
+    atualizado: "Ontem"
+  }
 ];
 
 const container = document.getElementById("postos");
@@ -15,9 +30,10 @@ function render(lista) {
     div.className = "card";
 
     div.innerHTML = `
-      <div>
+      <div class="info">
         <div class="nome">${p.nome}</div>
-        <div class="cidade">${p.cidade}</div>
+        <div class="tipo">${p.tipo}</div>
+        <div class="atualizado">Atualizado: ${p.atualizado}</div>
       </div>
       <div class="preco">R$ ${p.preco.toFixed(2)}</div>
     `;
@@ -35,8 +51,7 @@ busca.addEventListener("input", () => {
   const termo = busca.value.toLowerCase();
 
   const filtrado = dados.filter(p =>
-    p.nome.toLowerCase().includes(termo) ||
-    p.cidade.toLowerCase().includes(termo)
+    p.nome.toLowerCase().includes(termo)
   );
 
   render(filtrado);
