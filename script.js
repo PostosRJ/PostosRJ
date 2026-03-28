@@ -28,19 +28,23 @@ const container = document.getElementById("postos");
 function render(lista) {
   container.innerHTML = "";
 
-  lista.forEach(p => {
+  const maisBarato = encontrarMaisBarato();
+
+lista.forEach(p => {
     const distanciaKm = p.distancia ? (p.distancia * 111).toFixed(2) : "--";
 
     const div = document.createElement("div");
     div.className = "card";
 
     div.innerHTML = `
-      <span>
-        ${p.nome} <br>
-        📍 ${distanciaKm} km
-      </span>
-      <span class="preco">R$ ${p.preco}</span>
-    `;
+      <div>
+  ${p.nome}
+  ${p === maisBarato ? "🔥" : ""}
+  <br>
+  📍 ${distanciaKm} km
+</div>
+<span class="preco">R$ ${p.preco}</span>
+}
 
     container.appendChild(div);
   });
@@ -76,6 +80,7 @@ navigator.geolocation.getCurrentPosition(
 
     calcularDistancias();
     ordenarPorDistancia();
+    destacarMaisBarato();
   },
   function(error) {
     console.log("Erro ao pegar localização");
@@ -92,3 +97,26 @@ dados.forEach(p => {
 
 // PRIMEIRO RENDER
 render(dados);
+function encontrarMaisBarato() {
+  if (!dados.length) return;
+
+  let maisBarato = dados[0];
+
+  dados.forEach(p => {
+    if (p.preco < maisBarato.preco) {
+      maisBarato = p;
+    }
+  });
+
+  return maisBarato;
+}
+function destacarMaisBarato() {
+  const p = encontrarMaisBarato();
+
+  if (!p) return;
+
+  L.marker([p.lat, p.lng])
+    .addTo(map)
+    .bindPopup(`🔥 MAIS BARATO<br>${p.nome}<br>R$ ${p.preco}`)
+    .openPopup();
+}
